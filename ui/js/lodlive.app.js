@@ -91,6 +91,7 @@ $(function() {
 			// index++;
 			var aBox = $('<div class="startBox ' + spriteHome + '" rel="' + key + '"><h1><span>' + key.replace(/,.*/g, '').replace(/http:\/\//gi, '') + '</span><span class="' + spriteHome + ' info"></span></h1></div>');
 			$('#startPanel').children('#boxes').children('#boxesCont').append(aBox);
+			
 			var descr = value.description[$.jStorage.get('selectedLanguage')];
 			if (!descr) {
 				descr = value.description['en'];
@@ -282,7 +283,8 @@ $(function() {
 
 		orangeBox(firstLine, formTemplate);
 		blueBox(firstLine, formTemplate);
-		firstLine.append('<div class="startBox ' + spriteHome + '" id="boxV"><h1><span>' + lang('insertData') + '</span><span class="' + spriteHome + ' info"></span></h1></div>');
+		violetBox(firstLine, formTemplate);
+		//firstLine.append('<div class="startBox ' + spriteHome + '" id="boxV"><h1><span>' + lang('insertData') + '</span><span class="' + spriteHome + ' info"></span></h1></div>');
 
 		$('#menu').find('a[href^=#]').click(function() {
 			var text = $('<div class="text ' + spriteHome + '"><h3>' + $(this).text() + '</h3><div class="padding">' + $($(this).attr("href")).children('p').html() + '</div></div>');
@@ -323,6 +325,7 @@ $(function() {
 			form.submit();
 		});
 		form.append(invia);
+		/*
 		invia.hover(function() {
 			$(this).parent().parent().setBackgroundPosition({
 				x : -320
@@ -331,7 +334,7 @@ $(function() {
 			$(this).parent().parent().setBackgroundPosition({
 				x : -10
 			});
-		});
+		});*/
 		form.bind('submit', function() {
 			var value = $(this).find('*[name=startFrom]').val();
 			if (value != '') {
@@ -360,6 +363,23 @@ $(function() {
 		firstLine.children('#boxB').append(form);
 		addSubmit(form);
 		form.find('.inviaForm').attr("style", 'top: 138px');
+	}
+	
+	function violetBox(firstLine, formTemplate) {
+		var aBox = $('<div class="startBox ' + spriteHome + '" id="boxV"><h1><span>' + lang('insertData') + '</span></h1></div>');
+		firstLine.append(aBox);
+
+		var form = $(formTemplate);
+		var input = form.find('div.input');
+		var textarea = $("<div class=\"file\"><input type=file name=browse/></div>");
+		input.before(textarea);
+		input.remove();
+
+		form.children('.select').remove();
+		form.find('input').attr("readonly", false);
+		firstLine.children('#boxV').append(form);
+		addSubmit(form);
+		form.find('.inviaForm').attr("style", 'top: 190px');
 	}
 
 	function liveOnlodLive(dest) {

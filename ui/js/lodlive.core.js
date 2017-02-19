@@ -20,6 +20,7 @@ var debugOn = false;
 		pageCache : true,
 		timeout : 30000
 	});
+
 	var globalInfoPanelMap = {};
 	var globalInnerPageMap = {};
 	var context;
@@ -96,10 +97,12 @@ var debugOn = false;
 			var url = "";
 			var res = "";
 			var endpoint = "";
-
+	
 			$.each(lodLiveProfile.connection, function(key, value) {
 				var keySplit = key.split(",");
 				for (var a = 0; a < keySplit.length; a++) {
+					console.log("keySplit="+keySplit[a]);
+					console.log("res="+resource);
 					if (( testURI ? testURI : resource).indexOf(keySplit[a]) == 0) {
 						res = getSparqlConf(module, value, lodLiveProfile).replace(/\{URI\}/ig, resource.replace(/^.*~~/, ''));
 						if (value.proxy) {
@@ -355,7 +358,9 @@ var debugOn = false;
 				panel.append('<div class="panel" ></div>');
 				panel.append('<div class="panel2 maps sprite" ></div>');
 				panel.append('<div class="panel2 images sprite" ></div>');
-
+				panel.append('<div class="panel2 pollution sprite" ></div>');
+				panel.append('<div class="panel2 funds sprite" ></div>');
+				
 				panel.children('.panel,.panel2').hover(function() {
 					$(this).setBackgroundPosition({
 						y : -450
@@ -406,7 +411,7 @@ var debugOn = false;
 
 						anUl.append('<li ' + ($.jStorage.get('doCollectImages') ? 'class="checked"' : 'class="check"') + ' data-value="autoCollectImages"><span class="spriteLegenda"></span>' + lang('autoCollectImages') + '</li>');
 						anUl.append('<li ' + ($.jStorage.get('doDrawMap') ? 'class="checked"' : 'class="check"') + ' data-value="autoDrawMap"><span class="spriteLegenda"></span>' + lang('autoDrawMap') + '</li>');
-
+						
 						anUl.append('<li>&#160;</li>');
 						anUl.append('<li class="reload"><span  class="spriteLegenda"></span>' + lang('restart') + '</li>');
 						anUl.children('.reload').click(function() {
@@ -542,6 +547,24 @@ var debugOn = false;
 							imagePanel.show();
 						}
 						methods.updateImagePanel(panel);
+					} else if ($(this).hasClass("pollution"))  {
+						var polPanel = $('#pollutionPanel');
+						if (polPanel.length == 0) {
+							polPanel = $('<div id="polPanel"></div>');
+							panelContent.append(polPanel);
+						} else {
+							polPanel.show();
+						}
+						methods.updatePollutionPanel(panel);
+					} else if ($(this).hasClass("funds"))  {
+						var fundsPanel = $('#fundsPanel');
+						if (fundsPanel.length == 0) {
+							fundsPanel = $('<div id="fundsPanel"></div>');
+							panelContent.append(fundsPanel);
+						} else {
+							fundsPanel.show();
+						}
+						methods.updateFundsPanel(panel);
 					}
 				});
 
@@ -611,6 +634,12 @@ var debugOn = false;
 					methods.highlight(panel.children('.maps'), 2, 200, '-565px -450px');
 				}
 			}
+		},
+		updateFundsPanel : function(panel) {
+			panel.european_funds('update');
+		},
+		updatePollutionPanel : function(panel) {
+			panel.pollution('update');
 		},
 		updateImagePanel : function(panel) {
 			if ($.jStorage.get('doCollectImages', true)) {
@@ -2688,6 +2717,7 @@ var debugOn = false;
 			if ($.jStorage.get('doStats')) {
 				methods.doStats(anUri);
 			}
+			
 			if (SPARQLquery.indexOf("endpoint=") != -1) {
 				var endpoint = SPARQLquery.substring(SPARQLquery.indexOf("endpoint=") + 9);
 				endpoint = endpoint.substring(0, endpoint.indexOf("&"));
@@ -2695,6 +2725,7 @@ var debugOn = false;
 			} else {
 				destBox.attr("data-endpoint", SPARQLquery.substring(0, SPARQLquery.indexOf("?")));
 			}
+		
 			if (SPARQLquery.indexOf("http://system/dummy") == 0) {
 				// guessing endpoint from URI
 				methods.guessingEndpoint(anUri, function() {
